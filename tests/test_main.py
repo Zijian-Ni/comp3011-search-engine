@@ -101,8 +101,16 @@ class TestMainCLI:
         output = run_main_with_input(["stats", "quit"], monkeypatch)
         assert "No index loaded" in output
 
-    def test_load_missing_file(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_load_missing_file(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        tmp_path,
+    ) -> None:
         """'load' when index file missing shows error."""
+        missing = tmp_path / "does_not_exist.json.gz"
+        monkeypatch.setattr(
+            "src.search.SearchEngine.DEFAULT_INDEX_PATH", str(missing)
+        )
         output = run_main_with_input(["load", "quit"], monkeypatch)
         assert "not found" in output.lower() or "error" in output.lower()
 
